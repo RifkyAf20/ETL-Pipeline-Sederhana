@@ -1,8 +1,9 @@
 Submission ETL Pipeline - Fashion Studio Dicoding
 ==================================================
 
-Nama       : [Isi nama Anda]
-Email      : [Isi email Dicoding Anda]
+Nama       : [Rifky Afrizal Saputra]
+Email      : [rifky.23266@mhs.unesa.ac.id]
+ID Cohort  : [CDCC284D6Y1610]
 
 Deskripsi Proyek
 ----------------
@@ -12,20 +13,20 @@ dan menyimpannya ke dalam file CSV.
 
 Struktur Proyek
 ---------------
-submission-pemda/
-├── tests/
-│   ├── __init__.py
-│   ├── test_extract.py
-│   ├── test_transform.py
-│   └── test_load.py
-├── utils/
-│   ├── __init__.py
-│   ├── extract.py
-│   ├── transform.py
-│   └── load.py
-├── main.py
-├── requirements.txt
-└── submission.txt
+ETL-PIPELINE-SEDERHANA/
+└──submission-etlpipeline/
+   ├── tests/
+   │   ├── test_extract.py
+   │   ├── test_transform.py
+   │   └── test_load.py
+   ├── utils/
+   │   ├── extract.py
+   │   ├── transform.py
+   │   └── load.py
+   ├── main.py
+   ├── requirements.txt
+   ├── submission.txt
+   └── google-sheets-api.json
 
 Cara Menjalankan
 ----------------
