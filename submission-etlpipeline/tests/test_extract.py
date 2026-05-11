@@ -131,7 +131,7 @@ class TestScrapeMain:
     def test_scrape_main_skips_failed_pages(self, mock_sleep, mock_scrape_page):
         import requests as req
         soup = BeautifulSoup(SAMPLE_HTML, "html.parser")
-        mock_scrape_page.side_effect = [soup, req.exceptions.ConnectionError("fail"), soup]
+        mock_scrape_page.side_effect = [soup, Exception("fail"), soup]
         result = scrape_main(total_pages=3)
         assert len(result) == 4  # 2 successful pages × 2 products
 

@@ -36,6 +36,18 @@ class TestLoadToCsv:
         for col in SAMPLE_DF.columns:
             assert col in loaded.columns
 
+    def test_csv_not_empty(self, tmp_path):
+        output = str(tmp_path / "test_output.csv")
+        load_to_csv(SAMPLE_DF, output)
+        loaded = pd.read_csv(output)
+        assert not loaded.empty
+
+    def test_csv_data_integrity(self, tmp_path):
+        output = str(tmp_path / "test_output.csv")
+        load_to_csv(SAMPLE_DF, output)
+        loaded = pd.read_csv(output)
+        assert loaded["Title"].iloc[0] == "Cool T-Shirt"
+
     def test_returns_filepath(self, tmp_path):
         output = str(tmp_path / "test_output.csv")
         result = load_to_csv(SAMPLE_DF, output)
@@ -43,17 +55,17 @@ class TestLoadToCsv:
 
     def test_empty_dataframe_raises(self, tmp_path):
         output = str(tmp_path / "empty.csv")
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             load_to_csv(pd.DataFrame(), output)
 
     def test_none_dataframe_raises(self, tmp_path):
         output = str(tmp_path / "none.csv")
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             load_to_csv(None, output)
 
     def test_invalid_directory_raises(self, tmp_path):
         output = str(tmp_path / "nonexistent_dir" / "output.csv")
-        with pytest.raises(Exception):
+        with pytest.raises(OSError):
             load_to_csv(SAMPLE_DF, output)
 
 

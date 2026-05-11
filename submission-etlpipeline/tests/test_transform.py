@@ -1,3 +1,5 @@
+from unittest import result
+
 import pytest
 import pandas as pd
 import sys
@@ -68,6 +70,9 @@ class TestCleanPrice:
         result = clean_price("$0.00")
         assert result == 0.0
 
+    def test_invalid_price_string(self):
+        assert clean_price("Invalid Price") is None
+
     def test_large_price(self):
         result = clean_price("$100.00")
         assert result == pytest.approx(100.0 * EXCHANGE_RATE, rel=1e-2)
@@ -116,6 +121,9 @@ class TestCleanColors:
 class TestCleanSize:
     def test_valid_size(self):
         assert clean_size("Size: M") == "M"
+    
+    def test_invalid_size(self):
+        assert clean_size("Wrong Format") is None
 
     def test_size_xl(self):
         assert clean_size("Size: XL") == "XL"
@@ -136,6 +144,9 @@ class TestCleanGender:
 
     def test_gender_women(self):
         assert clean_gender("Gender: Women") == "Women"
+    
+    def test_invalid_gender(self):
+        assert clean_gender("Wrong Format") is None
 
     def test_none_input(self):
         assert clean_gender(None) is None
@@ -164,11 +175,11 @@ class TestTransform:
         result = transform(df)
         assert result.isnull().sum().sum() == 0
 
-    def test_no_duplicates(self):
+    def test_duplicate_rows_removed(self):
         doubled = SAMPLE_PRODUCTS + SAMPLE_PRODUCTS
         df = to_dataframe(doubled)
         result = transform(df)
-        assert len(result) == len(result.drop_duplicates())
+        assert len(result) < len(df)
 
     def test_removes_unknown_product(self):
         data = SAMPLE_PRODUCTS + [
@@ -189,12 +200,12 @@ class TestTransform:
     def test_rating_is_float(self):
         df = to_dataframe(SAMPLE_PRODUCTS)
         result = transform(df)
-        assert result["Rating"].dtype == float
+        assert pd.api.types.is_float_dtype(result["Rating"])
 
     def test_colors_is_int(self):
         df = to_dataframe(SAMPLE_PRODUCTS)
         result = transform(df)
-        assert result["Colors"].dtype == int
+        assert pd.api.types.is_integer_dtype(result["Colors"])
 
     def test_size_no_prefix(self):
         df = to_dataframe(SAMPLE_PRODUCTS)

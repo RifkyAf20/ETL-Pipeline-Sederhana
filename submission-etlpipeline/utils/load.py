@@ -47,7 +47,6 @@ def load_to_google_sheets(df: pd.DataFrame, spreadsheet_id: str, credentials_pat
         spreadsheet = client.open_by_key(spreadsheet_id)
         worksheet = spreadsheet.sheet1
 
-        # Clear and update
         worksheet.clear()
         data = [df.columns.tolist()] + df.values.tolist()
         worksheet.update(data)

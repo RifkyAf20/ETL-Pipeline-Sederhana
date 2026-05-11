@@ -64,28 +64,28 @@ def clean_colors(colors_str) -> int | None:
         return None
 
 
-def clean_size(size_str) -> str | None:
-    """Extract size value from string like 'Size: M'."""
-    try:
-        if pd.isna(size_str) or not isinstance(size_str, str):
-            return None
-        cleaned = size_str.replace("Size:", "").strip()
-        return cleaned if cleaned else None
-    except Exception as e:
-        logger.warning(f"Error cleaning size '{size_str}': {e}")
+def clean_size(text):
+    if not isinstance(text, str):
         return None
 
-
-def clean_gender(gender_str) -> str | None:
-    """Extract gender value from string like 'Gender: Men'."""
-    try:
-        if pd.isna(gender_str) or not isinstance(gender_str, str):
-            return None
-        cleaned = gender_str.replace("Gender:", "").strip()
-        return cleaned if cleaned else None
-    except Exception as e:
-        logger.warning(f"Error cleaning gender '{gender_str}': {e}")
+    if "Size:" not in text:
         return None
+
+    size = text.replace("Size:", "").strip()
+
+    return size if size else None
+
+
+def clean_gender(text):
+    if not isinstance(text, str):
+        return None
+
+    if "Gender:" not in text:
+        return None
+
+    gender = text.replace("Gender:", "").strip()
+
+    return gender if gender else None
 
 
 def transform(df: pd.DataFrame) -> pd.DataFrame:
@@ -93,29 +93,24 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
     try:
         logger.info(f"Starting transformation on {len(df)} rows.")
 
-        # Remove invalid titles
         invalid_titles = ["Unknown Product", ""]
         df = df[~df["Title"].isin(invalid_titles)]
         df = df[df["Title"].notna()]
 
-        # Clean each column
         df["Price"] = df["Price"].apply(clean_price)
         df["Rating"] = df["Rating"].apply(clean_rating)
         df["Colors"] = df["Colors"].apply(clean_colors)
         df["Size"] = df["Size"].apply(clean_size)
         df["Gender"] = df["Gender"].apply(clean_gender)
 
-        # Drop rows with any null values
         before = len(df)
         df = df.dropna()
         logger.info(f"Dropped {before - len(df)} rows with null values.")
 
-        # Drop duplicates
         before = len(df)
         df = df.drop_duplicates()
         logger.info(f"Dropped {before - len(df)} duplicate rows.")
 
-        # Enforce types
         df["Price"] = df["Price"].astype(float)
         df["Rating"] = df["Rating"].astype(float)
         df["Colors"] = df["Colors"].astype(int)
@@ -124,7 +119,6 @@ def transform(df: pd.DataFrame) -> pd.DataFrame:
         df["Title"] = df["Title"].astype(str)
         df["timestamp"] = df["timestamp"].astype(str)
 
-        # Reset index
         df = df.reset_index(drop=True)
 
         logger.info(f"Transformation complete. {len(df)} clean rows remaining.")
